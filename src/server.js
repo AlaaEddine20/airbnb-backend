@@ -1,11 +1,5 @@
 const express = require("express");
-const cors = require("cors");
 const listEndPoints = require("express-list-endpoints");
-
-const placesRoutes = require("./services/places/Places");
-// const ownersRoutes = require("./services/owners/Owners");
-// const usersRoutes = require("./services/users/Users");
-
 const {
   badRequestHandler,
   unauthorizedHandler,
@@ -14,41 +8,22 @@ const {
   genericErrorHandler,
 } = require("./errorHandling");
 
+const placesRoutes = require("./services/places/Places");
+const ownersRoutes = require("./services/owners/Owners");
+// const usersRoutes = require("./services/users/Users");
+
 const server = express();
 
-const port = process.env.PORT || 5000;
-
-const loggerMiddleWare = (req, res, next) => {
-  console.log(`Logged ${req.url} -- ${new Date()}`);
-  next();
-};
-
 server.use(express.json());
-server.use(loggerMiddleWare);
 
-const whiteList =
-  process.env.NODE_ENV === "production"
-    ? [process.env.FE_URL_PROD]
-    : [process.env.FE_URL_DEV];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whiteList.indexOf(origin) !== -1) {
-      // ALLOWED
-      callback(null, true);
-    } else {
-      // NOT ALLOWED
-      callback(new Error("NOT ALLOWED - CORS ISSUES"));
-    }
-  },
-};
-
-server.use(cors(corsOptions));
+server.get("/", (req, res, next) => res.send("Server is running..."));
 
 // ROUTES
 server.use("/places", placesRoutes);
-// server.use("/owners", ownersRoutes);
+server.use("/owners", ownersRoutes);
 // server.use("/users", usersRoutes);
+
+const port = process.env.PORT || 5000;
 
 // ERROR HANDLERS
 server.use(badRequestHandler);

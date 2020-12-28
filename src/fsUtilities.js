@@ -1,4 +1,4 @@
-const { readDB, writeDB } = require("fs-extra");
+const { readJSON, writeJSON } = require("fs-extra");
 const { join } = require("path");
 
 const placesPath = join(__dirname, "./services/places/Places.json");

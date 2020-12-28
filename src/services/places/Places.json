@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "address": {
+      "street": "Roma avenue",
+      "city": "Varenna",
+      "zip code": "23829",
+      "country": "Italy, Lombardia",
+      "latitude": "46.011350600703885",
+      "longitude": "9.283587346931256"
+    },
+    "title": "Whole House",
+    "description": "House near a lake",
+    "price": "700$",
+    "rooms info": "3 hosts",
+    "house facilities": "1 bedroom, 1 bed, 1 bathroom, kitchen, free parking, Wi-fi",
+    "image": []
+  }
+]
