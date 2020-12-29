@@ -1,39 +1,59 @@
 const express = require("express");
-const multer = require("multer");
-const cloudinary = require("../cloudinary");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const uniqid = require("uniqid");
 const { getOwners, writeOwners } = require("../../fsUtilities");
-const { get } = require("../places/Places");
 
 const ownersRouter = express.Router();
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "airbnb-clone",
-  },
+// POST OWNER INFOS
+ownersRouter.post("/", async (req, res, next) => {
+  try {
+    const owners = await getOwners();
+
+    owners.push({
+      ...req.body,
+      ownerID: uniqid(),
+    });
+
+    await writeOwners(owners);
+    res.send(owners);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 });
 
-const cloudinaryMulter = multer({ storage: storage });
+// GET ALL OWNERS
+ownersRouter.get("/", async (req, res, next) => {
+  try {
+    const owners = await getOwners();
+    res.send(owners);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
-ownersRouter.post(
-  "/",
-  cloudinaryMulter.single("cover"),
-  async (req, res, next) => {
-    try {
-      const owners = await getOwners();
+// DELETE OWNER BY ID
+ownersRouter.delete("/:ownerID", async (req, res, next) => {
+  try {
+    const owners = await getOwners();
+    const ownerFound = owners.find((owner) => owner.ID === req.params.ownerID);
 
-      owners.push({
-        ...req.body,
-        username: "",
-        image: req.file.path,
-      });
-
-      await writeOwners(owners);
-      req.json(owners);
-    } catch (error) {
-      console.log(error);
+    if (ownerFound) {
+      const filteredOwners = owners.filter(
+        (owner) => owner.ID !== req.params.ownerID
+      );
+      await writeOwners(filteredOwners);
+      res.status(204, "Deleted").send();
+    } else {
+      const error = new Error();
+      error.httpStatusCode = 404;
+      error.message = "Owner ID doesn't exist";
       next(error);
     }
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
-);
+});
+module.exports = ownersRouter;

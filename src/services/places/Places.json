@@ -1,18 +1,21 @@
 [
   {
+    "title": "test",
+    "description": "stocazzo",
+    "price": "400$",
+    "rooms info": "2 hosts",
+    "house facilities": "3 bedroom, 2 beds, 1 bathroom, kitchen, free parking, Wi-fi",
+    "image": [],
     "address": {
-      "street": "Roma avenue",
-      "city": "Varenna",
-      "zip code": "23829",
-      "country": "Italy, Lombardia",
-      "latitude": "46.011350600703885",
-      "longitude": "9.283587346931256"
+      "street": "stocazzo",
+      "city": "Riomaggiore",
+      "zip code": "19017",
+      "country": "Italy, Liguria",
+      "latitude": "44.16458950113654",
+      "longitude": "9.52200288963477"
     },
-    "title": "Whole House",
-    "description": "House near a lake",
-    "price": "700$",
-    "rooms info": "3 hosts",
-    "house facilities": "1 bedroom, 1 bed, 1 bathroom, kitchen, free parking, Wi-fi",
-    "image": []
+    "ownerID": "3ee42g9rskja2f3rb",
+    "createdAt": "2020-12-29T16:32:15.435Z",
+    "placeID": "3ee42g2ukkja7ksi4"
   }
 ]
