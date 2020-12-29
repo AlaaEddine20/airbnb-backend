@@ -9,13 +9,25 @@ ownersRouter.post("/", async (req, res, next) => {
   try {
     const owners = await getOwners();
 
-    owners.push({
-      ...req.body,
-      ownerID: uniqid(),
-    });
+    const ownerFound = owners.find(
+      (owner) => owner.UserName === req.body.UserName
+    );
 
-    await writeOwners(owners);
-    res.send(owners);
+    if (!ownerFound) {
+      owners.push({
+        ...req.body,
+        ownerID: uniqid(),
+      });
+
+      await writeOwners(owners);
+      res.status(200).send("Successfully loaded!");
+    } else {
+      const error = new Error();
+      error.httpStatusCode = 400;
+      error.message =
+        "Owner already registered, please choose a different name.";
+      next(error);
+    }
   } catch (error) {
     console.log(error);
     next(error);

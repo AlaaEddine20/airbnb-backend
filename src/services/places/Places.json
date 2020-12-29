@@ -1,13 +1,13 @@
 [
   {
-    "title": "test",
-    "description": "stocazzo",
+    "title": "Riomaggiore Garden",
+    "description": "Apt. in old town",
     "price": "400$",
     "rooms info": "2 hosts",
     "house facilities": "3 bedroom, 2 beds, 1 bathroom, kitchen, free parking, Wi-fi",
     "image": [],
     "address": {
-      "street": "stocazzo",
+      "street": "Santuario Avenue",
       "city": "Riomaggiore",
       "zip code": "19017",
       "country": "Italy, Liguria",
@@ -15,7 +15,26 @@
       "longitude": "9.52200288963477"
     },
     "ownerID": "3ee42g9rskja2f3rb",
-    "createdAt": "2020-12-29T16:32:15.435Z",
-    "placeID": "3ee42g2ukkja7ksi4"
+    "createdAt": "2020-12-29T20:02:15.508Z",
+    "placeID": "3ee42g1ewkjaf2us5"
+  },
+  {
+    "title": "Al Castello",
+    "description": "Residence",
+    "price": "100$",
+    "rooms info": "2 hosts",
+    "house facilities": "1 bedroom, 1 bed, 1 bathroom, kitchen, free parking, Wi-fi",
+    "image": [],
+    "address": {
+      "street": "Calle de le Ancore",
+      "city": "Venezia",
+      "zip code": "30122",
+      "country": "Italy",
+      "latitude": "45.43194269832569",
+      "longitude": "12.356064701002682"
+    },
+    "ownerID": "3ee42g9rskja2f3rb",
+    "createdAt": "2020-12-29T20:28:38.799Z",
+    "placeID": "3ee42g4wwkjag0sgg"
   }
 ]
