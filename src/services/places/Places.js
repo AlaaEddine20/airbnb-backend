@@ -1,16 +1,30 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator");
-const { join } = require("path");
 const uniqid = require("uniqid");
+const multer = require("multer");
+const cloudinary = require("../../cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const { getPlaces, writePlaces, getOwners } = require("../../fsUtilities");
-
+// ROUTER
 const placesRouter = express.Router();
 
+// VALIDATION
 const validationPlaces = [
   check("title").exists().withMessage("title is required!"),
   check("description").exists().withMessage("description is required!"),
 ];
 
+// STORAGE
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "places-img",
+  },
+});
+
+const cloudinaryMulter = multer({ storage: storage });
+
+// GET ALL PLACES
 placesRouter.get("/", async (req, res, next) => {
   try {
     const places = await getPlaces();
@@ -22,6 +36,7 @@ placesRouter.get("/", async (req, res, next) => {
   }
 });
 
+// POST PLACES BY OWNER ID
 placesRouter.post("/:ownerID", validationPlaces, async (req, res, next) => {
   try {
     const validationErrors = validationResult(req);
@@ -67,5 +82,26 @@ placesRouter.post("/:ownerID", validationPlaces, async (req, res, next) => {
     next(error);
   }
 });
+
+// UPLOAD IMAGE TO PLACE
+placesRouter.post(
+  "/upload/:placeID/:ownerID",
+  cloudinaryMulter.array("image"),
+  async (req, res, next) => {
+    try {
+      const places = await getPlaces();
+      const owners = await getOwners();
+      places.push({
+        ...req.body,
+        img: req.file.path,
+      });
+      await writePlaces(places);
+      res.json(places);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
 
 module.exports = placesRouter;

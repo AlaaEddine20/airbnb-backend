@@ -27,6 +27,6 @@ module.exports = {
   writePlaces: async (placesData) => writeDB(placesPath, placesData),
   getOwners: async () => readDB(ownersPath),
   writeOwners: async (ownersData) => writeDB(ownersPath, ownersData),
-  //   readUsers: async () => readDB(usersPath),
-  //   writeUsers: async (usersData) => writeDB(usersPath, usersData),
+  getUsers: async () => readDB(usersPath),
+  writeUsers: async (usersData) => writeDB(usersPath, usersData),
 };
