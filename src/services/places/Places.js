@@ -22,7 +22,7 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const cloudinaryMulter = multer({ storage: storage });
+const cloudinaryStorage = multer({ storage: storage });
 
 // GET ALL PLACES
 placesRouter.get("/", async (req, res, next) => {
@@ -37,25 +37,32 @@ placesRouter.get("/", async (req, res, next) => {
 });
 
 // POST PLACES BY OWNER ID
-placesRouter.post("/:ownerID", validationPlaces, async (req, res, next) => {
+placesRouter.post("/:owner_id", validationPlaces, async (req, res, next) => {
   try {
     const validationErrors = validationResult(req);
 
+    const places = await getPlaces();
+    const owners = await getOwners();
     if (!validationErrors.isEmpty()) {
       const error = new Error();
       error.message = validationErrors;
       error.httpStatusCode = 400;
       return next(error);
     }
-
-    const places = await getPlaces();
-    const owners = await getOwners();
-
+    // CHECKING IF THE PLACE EXISTS IN THE DB BY THE ADDRESS
     const streetAddress = req.body.address.street;
     const place = places.find(
       (place) => place.address.street === streetAddress
     );
-    const owner = owners.find((owner) => owner.ownerID === req.params.ownerID);
+    // IF THE ADDRESS EXISTS RETURN...
+    if (place) {
+      return next(new Error("Place already exists!"));
+    }
+
+    // CHECKING IF THE OWNER EXISTS IN DB
+    const owner = owners.find(
+      (owner) => owner.owner_id === req.params.owner_id
+    );
 
     if (!owner) {
       const error = new Error();
@@ -63,16 +70,14 @@ placesRouter.post("/:ownerID", validationPlaces, async (req, res, next) => {
       error.message = "Owner not found!";
       next(error);
     }
-
-    if (place) {
-      return next(new Error("Place already exists!"));
-    }
+    // AFTER THE CHECKS ARE PASSED THEN POST
     const newPlace = {
       ...req.body,
-      ownerID: req.params.ownerID,
+      place_pics: [],
+      owner_id: req.params.owner_id,
+      ownerName: owner.UserName,
+      place_id: uniqid(),
       createdAt: new Date(),
-      placeID: uniqid(),
-      ownerName: req.body.Username,
     };
     places.push(newPlace);
     await writePlaces(places);
@@ -83,20 +88,71 @@ placesRouter.post("/:ownerID", validationPlaces, async (req, res, next) => {
   }
 });
 
-// UPLOAD IMAGE TO PLACE
+// DELETE PLACE
+placesRouter.delete("/:place_id", validationPlaces, async (req, res, next) => {
+  try {
+    const places = await getPlaces();
+    // FIND PLACE
+    const placeFound = places.find(
+      (place) => place.place_id === req.params.place_id
+    );
+    if (!placeFound) {
+      res.send(new Error("Place not found"));
+    } else {
+      const filteredPlaces = places.filter(
+        (place) => place.place_id !== req.params.place_id
+      );
+      await writePlaces(filteredPlaces);
+      res.status(204).send("Deleted!");
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+// PLACE IMAGE UPLOAD
 placesRouter.post(
-  "/upload/:placeID/:ownerID",
-  cloudinaryMulter.array("image"),
+  "/:owner_id/place_id/upload",
+  cloudinaryStorage.array("image", 2),
   async (req, res, next) => {
+    // const validationErrors = validationResult(req);
+
     try {
-      const places = await getPlaces();
+      // CHECK IF THERE'RE ERRORS
+      if (!validationErrors.isEmpty()) {
+        const error = new Error();
+        error.httpStatusCode = 400;
+        error.message = validationErrors;
+        return next(error);
+      }
+
+      // CHECKING IF THE OWNER EXISTS IN DB
       const owners = await getOwners();
-      places.push({
-        ...req.body,
-        img: req.file.path,
-      });
-      await writePlaces(places);
-      res.json(places);
+      const owner = owners.find(
+        (owner) => owner.owner_id === req.params.owner_id
+      );
+      // IF NOT SEND ERROR
+      if (!owner) {
+        return next(new Error("Owner not found!"));
+      }
+      // CHECKING IF THE PLACE EXISTS IN THE DB BY THE ADDRESS
+      const places = await getPlaces();
+      const place = places.find(
+        (place) => place.place_id === req.params.place_id
+      );
+      // IF NOT SEND ERROR
+      if (!place) {
+        next(new Error("Place not found!"));
+      } else {
+        const place_pics = req.body.place_pics;
+        place_pics.push({
+          ...req.body,
+          image: req.file.path,
+        });
+        await writePlaces(places);
+        res.send("ok");
+      }
     } catch (error) {
       console.log(error);
       next(error);

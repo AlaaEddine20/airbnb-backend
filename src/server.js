@@ -10,7 +10,7 @@ const {
 
 const placesRoutes = require("./services/places/Places");
 const ownersRoutes = require("./services/owners/Owners");
-const usersRoutes = require("./services/users/Users");
+const bookingsRoutes = require("./services/bookings/Bookings");
 
 const server = express();
 
@@ -21,7 +21,7 @@ server.get("/", (req, res, next) => res.send("Server is running..."));
 // ROUTES
 server.use("/places", placesRoutes);
 server.use("/owners", ownersRoutes);
-server.use("/users", usersRoutes);
+server.use("/bookings", bookingsRoutes);
 
 const port = process.env.PORT || 5000;
 

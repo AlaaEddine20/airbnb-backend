@@ -3,7 +3,7 @@ const { join } = require("path");
 
 const placesPath = join(__dirname, "./services/places/Places.json");
 const ownersPath = join(__dirname, "./services/owners/Owners.json");
-const usersPath = join(__dirname, "./services/users/Users.json");
+const bookingsPath = join(__dirname, "./services/bookings/Bookings.json");
 
 const readDB = async (filePath) => {
   try {
@@ -27,6 +27,6 @@ module.exports = {
   writePlaces: async (placesData) => writeDB(placesPath, placesData),
   getOwners: async () => readDB(ownersPath),
   writeOwners: async (ownersData) => writeDB(ownersPath, ownersData),
-  getUsers: async () => readDB(usersPath),
-  writeUsers: async (usersData) => writeDB(usersPath, usersData),
+  getBookings: async () => readDB(bookingsPath),
+  writeBookings: async (bookingsData) => writeDB(bookingsPath, bookingsData),
 };
